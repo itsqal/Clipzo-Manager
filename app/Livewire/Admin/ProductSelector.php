@@ -4,19 +4,19 @@ namespace App\Livewire\Admin;
 
 use Livewire\Attributes\On;
 use Livewire\Component;
-use App\Models\Service;
+use App\Models\Product;
 
-class ServiceSelector extends Component
+class ProductSelector extends Component
 {
     public bool $mode = false;
 
-    public array $selectedServices = [];
+    public array $selectedProducts = [];
 
-    public $services = [];
+    public $products = [];
 
     public function mount()
     {
-        $this->services = Service::orderBy('created_at', 'asc')->get();
+        $this->products = Product::orderBy('created_at', 'asc')->get();
     }
 
     // Event catcher
@@ -25,27 +25,27 @@ class ServiceSelector extends Component
     {
         $this->mode = $mode;
         if (!$mode) {
-            $this->selectedServices = [];
+            $this->selectedProducts = [];
             $this->dispatchSummaryUpdate();
         }
     }
 
-    public function selectService(int $id, string $name, float $price)
+    public function selectProduct(int $id, string $name, float $price)
     {
         if (!$this->mode) {
             return;
         }
         
-        $index = array_search($id, array_column($this->selectedServices, 'id'));
+        $index = array_search($id, array_column($this->selectedProducts, 'id'));
 
         if ($index !== false) {
-            unset($this->selectedServices[$index]);
+            unset($this->selectedProducts[$index]);
         } else {
-            $this->selectedServices[] = [
+            $this->selectedProducts[] = [
                 'id' => $id,
                 'name' => $name,
                 'price' => $price,
-                'type' => 'service',
+                'type' => 'product',
                 'quantity' => 1,
             ];
         }
@@ -55,11 +55,11 @@ class ServiceSelector extends Component
     
     protected function dispatchSummaryUpdate()
     {
-        $this->dispatch('serviceSelectionUpdated', services: $this->selectedServices);
+        $this->dispatch('productSelectionUpdated', products: $this->selectedProducts);
     }
 
     public function render()
     {
-        return view('livewire.admin.service-selector');
+        return view('livewire.admin.product-selector');
     }
 }
